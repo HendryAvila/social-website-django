@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesion{% endblock %}
+
+{% block content  %}
+    <h1>Iniciar sesion</h1>
+    <p>Por favor usa el siguiente formulario para iniciar sesion</p>  
+    <form  method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <p><input type="submit" value="Inicio de sesion"></p>
+    </form>   
+{% endblock %}
