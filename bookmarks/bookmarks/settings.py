@@ -28,6 +28,11 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
+LOGIN_REDIRECT_URL = "dashboard" # despues de pasar el login me debe redireccionar aca
+LOGIN_URL = "login"
+LOGOUT_URL = "logout"
+
 # Application definition
 
 INSTALLED_APPS = [
