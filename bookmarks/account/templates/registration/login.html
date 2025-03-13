@@ -12,12 +12,16 @@
     {% else %}
         <p>Por favor usa el siguiente formulario para iniciar sesion</p>  
     {% endif %}
-    <d class="login-form">
+    <div class="login-form">
         <form action="{% url 'login' %}" method="post">
             {{ form.as_p }}
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next}}">
             <p><input type="submit" value="Inicio de sesion"></p>
-        </form>   
-    </d>
+        </form>
+        <p><a href="{% url 'password_reset' %}">
+            ¿Olvidaste tu contraseña?
+        </a>
+    </p>   
+    </div>
 {% endblock %}
