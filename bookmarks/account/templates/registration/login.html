@@ -10,7 +10,8 @@
             Por favor intenta de nuevo
         </p>
     {% else %}
-        <p>Por favor usa el siguiente formulario para iniciar sesion</p>  
+        <p>Por favor usa el siguiente formulario para iniciar sesion</p>
+        <p>si no tienes una cuenta puedes registrarte <a href=" {% url 'register' %}">aqui</a></p>
     {% endif %}
     <div class="login-form">
         <form action="{% url 'login' %}" method="post">
