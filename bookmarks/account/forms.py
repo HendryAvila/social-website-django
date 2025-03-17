@@ -1,27 +1,38 @@
 from django import forms
 from django.contrib.auth.models import User
+from . import models
 
 class LogingForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
 class UserRegistrationForm(forms.ModelForm):
+
     password = forms.CharField(
         label="Contraseña",
-        widget=forms.PasswordInput
-        )
+        widget=forms.PasswordInput)
     password2 = forms.CharField(
-        label="Repite la contraseña",
-        widget=forms.PasswordInput
-        )
+        label="Repite tu contraseña",
+        widget=forms.PasswordInput)
     
     class Meta:
         model = User
-        fields = ["username","first_name","email"]
+        fields = ["username", "first_name", "last_name", "email"]
 
     def clean_password2(self):
         cd = self.cleaned_data
         if cd["password"] != cd["password2"]:
-            raise forms.ValidationError("Las contraseñas no coinciden")
+            raise forms.ValidationError("Las contraseñas no coincident")
         else:
             return cd["password2"]
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name", "email"]
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = models.Profile
+        fields = ["date_of_birth", "photo"]
+    

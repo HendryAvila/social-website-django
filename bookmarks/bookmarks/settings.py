@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 
 LOGIN_REDIRECT_URL = "dashboard" # despues de pasar el login me debe redireccionar aca
