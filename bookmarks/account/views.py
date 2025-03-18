@@ -47,10 +47,10 @@ def register(request):
     return render (request, "account/register.html", {"user_form": user_form})
 
 @login_required
-def edit(request):
+def edit(request) -> render:
     if request.method == 'POST':
         user_form = forms.UserEditForm(instance=request.user,
-                                 data=request.POST)
+                                data=request.POST)
         profile_form = forms.ProfileEditForm(
                                     instance=request.user.profile,
                                     data=request.POST,
@@ -58,10 +58,10 @@ def edit(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, 'Profile updated '\
-                                      'successfully')
+            messages.success(request,'Perfil actualizado '\
+                                    'exitosamente!.')
         else:
-            messages.error(request, 'Error updating your profile')
+            messages.error(request, 'Error al actualizar el perfil.')
     else:
         user_form = forms.UserEditForm(instance=request.user)
         profile_form = forms.ProfileEditForm(
