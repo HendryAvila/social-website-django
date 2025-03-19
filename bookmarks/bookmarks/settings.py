@@ -89,6 +89,12 @@ DATABASES = {
 }
 
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Permite seguir usando el username si es necesario
+    'account.authentication.EmailAuthBackend',  # Tu backend personalizado
+]
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
