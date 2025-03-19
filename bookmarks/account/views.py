@@ -1,14 +1,18 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from . import forms
 from . import models
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+import logging
 
-def user_login(request):
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+def user_login(request: HttpRequest) -> render:
     if request.method == "POST": #si la solicitud es POST
         form = forms.LogingForm(request.POST) #Instanciamos el formulario con la informacion incluida en el post
         if form.is_valid(): #verifo que los datos pasados son correctos
@@ -30,10 +34,10 @@ def user_login(request):
 
 
 @login_required
-def dashboard(request):
+def dashboard(request: HttpRequest) -> render:
     return render(request, "account/dashboard.html", {"section": "dashboard"})
 
-def register(request):
+def register(request: HttpRequest) -> render:
     if request.method == "POST":#verificamos que sea un method POST
         user_form = forms.UserRegistrationForm(request.POST) #instanciamos el formulario rellenado con los datos del request
         if user_form.is_valid(): #verificamos
@@ -47,7 +51,7 @@ def register(request):
     return render (request, "account/register.html", {"user_form": user_form})
 
 @login_required
-def edit(request) -> render:
+def edit(request: HttpRequest) -> render:
     if request.method == 'POST':
         user_form = forms.UserEditForm(instance=request.user,
                                 data=request.POST)
