@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 import logging
 from django.http import HttpRequest
+from .models import Profile
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -20,3 +21,9 @@ class EmailAuthBackend:
         except User.DoesNotExist as e:
             logging.warning(f"El usuario no existe: {e}")
             return None
+        
+def create_profile(backend, user, *args, **kargs):
+    """ 
+    get or create a user profile for social auth
+    """
+    Profile.objects.get_or_create(user=user)

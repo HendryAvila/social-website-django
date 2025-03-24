@@ -398,3 +398,11 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+/env
+.env
+/venv
+db.sqlite3
+
+cert.crt 
+key.pem 
