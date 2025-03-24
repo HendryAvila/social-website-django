@@ -87,12 +87,20 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Permite seguir usando el username si es necesario
     'account.authentication.EmailAuthBackend',  # Tu backend personalizado
     'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
 ]
 SOCIAL_AUTH_FACEBOOK_KEY=os.getenv("SOCIAL_AUTH_FACEBOOK_KEY")
 SOCIAL_AUTH_FACEBOOK_SECRET=os.getenv("SOCIAL_AUTH_FACEBOOK_SECRET")
 SOCIAL_AUTH_FACEBOOK_SCOPE= ["email"]
-if not SOCIAL_AUTH_FACEBOOK_KEY and SOCIAL_AUTH_FACEBOOK_SECRET:
-    logging.info("No se encuentra Social_AUTH_FACEBOOK_KEY y SECRET")
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+
+logging.info(F"Key: {SOCIAL_AUTH_GOOGLE_OAUTH2_KEY}")
+logging.info(f"Secret: {SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET}")
+if not SOCIAL_AUTH_FACEBOOK_KEY and SOCIAL_AUTH_FACEBOOK_SECRET and SOCIAL_AUTH_GOOGLE_OATH2_KEY and SOCIAL_AUTH_GOOGLE_OATH2_SECRETY:
+    logging.info("No se encuentran las credenciales")
 else:
     logging.info("Claves de FB AUTH ok")
 
