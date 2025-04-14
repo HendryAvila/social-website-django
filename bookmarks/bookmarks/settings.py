@@ -16,6 +16,11 @@ SECRET_KEY = 'django-insecure-ef3&(66wj7()*_up$5(d9f5@zrzd*cmz9uc7ktc3!6rpmvtw82
 
 DEBUG = True
 
+if DEBUG:
+    import mimetypes
+    mimetypes.add_type('application/javascript', '.js', True)
+    mimetypes.add_type('text/css', '.css', True)
+
 ALLOWED_HOSTS = ["hendry.com", "localhost", "127.0.0.1"]
 
 MEDIA_URL = "media/"
@@ -39,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'django_extensions',
+    'corsheaders',
     
 ]
 
@@ -50,7 +56,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'bookmarks.urls'
 

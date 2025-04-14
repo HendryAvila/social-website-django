@@ -13,14 +13,6 @@ class ImageCreateForm(forms.ModelForm):
             'url': forms.HiddenInput,
         }
 
-    def clean_url(self):
-        url = self.cleaned_data['url']
-        valid_extensions = ['jpg', 'jpeg', 'png']
-        extension = url.rsplit('.', 1)[1].lower()
-        if extension not in valid_extensions:
-            raise forms.ValidationError('La URL proporcionada no ' \
-                                        'concuerda con las extensiones de imagenes vcalidad')
-        return url
 
     def save(self, force_insert=False,
                    force_update=False,
@@ -28,8 +20,7 @@ class ImageCreateForm(forms.ModelForm):
         image = super().save(commit=False)
         image_url = self.cleaned_data['url']
         name = slugify(image.title)
-        extension = image_url.rsplit('.', 1)[1].lower()
-        image_name = f'{name}.{extension}'
+        image_name = name
         # download image from the given URL
         response = requests.get(image_url)
         image.image.save(image_name,
