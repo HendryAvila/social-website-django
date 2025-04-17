@@ -53,5 +53,12 @@
         {% block content %}
         {% endblock %}
     </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', (event) =>{
+        
+        {% block domready  %}
+        {% endblock  %}
+      })
+    </script>
 </body>
 </html>
