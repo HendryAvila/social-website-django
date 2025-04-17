@@ -36,11 +36,11 @@ def image_like(request):
     
     if image_id and action:
         try:
-            Image.objects.get(id=id)
+            image = Image.objects.get(id=image_id)
             if action == 'like':
-                Image.users_like.add(request.user)
+                image.users_like.add(request.user)
             else:
-                Image.users_like.remove(request.user)
+                image.users_like.remove(request.user)
             return JsonResponse({'status': 'ok'})
         except Image.DoesNotExist:
             pass
