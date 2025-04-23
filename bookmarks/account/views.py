@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.models import User
+from actions.utils import create_action
 from . import forms
 from . import models
 
@@ -47,6 +48,7 @@ def register(request: HttpRequest) -> render:
             new_user.set_password(user_form.cleaned_data["password"])
             new_user.save()
             models.Profile.objects.create(user=new_user)
+            create_action(request.user, 'has created an account')
             return render(request, "account/register_done.html", {"new_user": new_user})
     else:
         user_form = forms.UserRegistrationForm()
@@ -110,6 +112,7 @@ def user_follow(request):
                 models.Contact.objects.get_or_create(
                     user_from=request.user,
                     user_to=user)
+                create_action(request.user, 'is following')
                 
             else:
                 models.Contact.objects.filter(user_from=request.user,
