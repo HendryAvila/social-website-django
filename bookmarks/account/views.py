@@ -16,57 +16,74 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def user_login(request: HttpRequest) -> render:
-    if request.method == "POST": #si la solicitud es POST
-        form = forms.LogingForm(request.POST) #Instanciamos el formulario con la informacion incluida en el post
-        if form.is_valid(): #verifo que los datos pasados son correctos
-            cd = form.cleaned_data #limpia los datos y devuelve un diccionario
+def user_login(request):
+    if request.method == 'POST':
+        form = forms.LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
             user = authenticate(request,
-                                username = cd['username'],
-                                password = cd['password'])
-            if user is not None: #verificamos que el user no devuelve None, es decir que paso la authenticacion
+                                username=cd['username'],
+                                password=cd['password'])
+            if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return HttpResponse('Authenticated')
+                    return HttpResponse('Authenticated successfully')
                 else:
-                    return HttpResponse('Disable account')
+                    return HttpResponse('Disabled account')
             else:
                 return HttpResponse('Invalid login')
     else:
-        form = forms.LogingForm()
+        form = forms.LoginForm()
     return render(request, 'account/login.html', {'form': form})
 
 
 @login_required
-def dashboard(request: HttpRequest) -> render:
+def dashboard(request):
+    # Display all actions by default
     actions = Action.objects.exclude(user=request.user)
-    following_ids = request.user.following.value_list('id', flat=True)
-    
+    following_ids = request.user.following.values_list('id',
+                                                       flat=True)
     if following_ids:
+        # If user is following others, retrieve only their actions
         actions = actions.filter(user_id__in=following_ids)
-    actions = actions.select_related('user', 'user__profile').prefetch_related('target')[:10]
-    return render(request, "account/dashboard.html", {"section": "dashboard",
-                                                      'actions': actions})
+    actions = actions.select_related('user', 'user__profile')\
+                     .prefetch_related('target')[:10]
+    print(actions)
+    return render(request,
+                  'account/dashboard.html',
+                  {'section': 'dashboard',
+                   'actions': actions})
 
-def register(request: HttpRequest) -> render:
-    if request.method == "POST":#verificamos que sea un method POST
-        user_form = forms.UserRegistrationForm(request.POST) #instanciamos el formulario rellenado con los datos del request
-        if user_form.is_valid(): #verificamos
+
+def register(request):
+    if request.method == 'POST':
+        user_form = forms.UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            # Create a new user object but avoid saving it yet
             new_user = user_form.save(commit=False)
-            new_user.set_password(user_form.cleaned_data["password"])
+            # Set the chosen password
+            new_user.set_password(
+                user_form.cleaned_data['password'])
+            # Save the User object
             new_user.save()
+            # Create the user profile
             models.Profile.objects.create(user=new_user)
-            create_action(request.user, 'has created an account')
-            return render(request, "account/register_done.html", {"new_user": new_user})
+            create_action(new_user, 'has created an account')
+            return render(request,
+                          'account/register_done.html',
+                          {'new_user': new_user})
     else:
         user_form = forms.UserRegistrationForm()
-    return render (request, "account/register.html", {"user_form": user_form})
+    return render(request,
+                  'account/register.html',
+                  {'user_form': user_form})
+
 
 @login_required
-def edit(request: HttpRequest) -> render:
+def edit(request):
     if request.method == 'POST':
         user_form = forms.UserEditForm(instance=request.user,
-                                data=request.POST)
+                                 data=request.POST)
         profile_form = forms.ProfileEditForm(
                                     instance=request.user.profile,
                                     data=request.POST,
@@ -74,10 +91,10 @@ def edit(request: HttpRequest) -> render:
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request,'Perfil actualizado '\
-                                    'exitosamente!.')
+            messages.success(request, 'Profile updated '\
+                                      'successfully')
         else:
-            messages.error(request, 'Error al actualizar el perfil.')
+            messages.error(request, 'Error updating your profile')
     else:
         user_form = forms.UserEditForm(instance=request.user)
         profile_form = forms.ProfileEditForm(
@@ -86,7 +103,7 @@ def edit(request: HttpRequest) -> render:
                   'account/edit.html',
                   {'user_form': user_form,
                    'profile_form': profile_form})
-    
+
 
 @login_required
 def user_list(request):
@@ -106,7 +123,7 @@ def user_detail(request, username):
                   'account/user/detail.html',
                   {'section': 'people',
                    'user': user})
-    
+
 
 @require_POST
 @login_required
@@ -120,8 +137,7 @@ def user_follow(request):
                 models.Contact.objects.get_or_create(
                     user_from=request.user,
                     user_to=user)
-                create_action(request.user, 'is following')
-                
+                create_action(request.user, 'is following', user)
             else:
                 models.Contact.objects.filter(user_from=request.user,
                                        user_to=user).delete()
