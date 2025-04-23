@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.models import User
 from actions.utils import create_action
+from actions.models import Action
 from . import forms
 from . import models
 
@@ -38,7 +39,14 @@ def user_login(request: HttpRequest) -> render:
 
 @login_required
 def dashboard(request: HttpRequest) -> render:
-    return render(request, "account/dashboard.html", {"section": "dashboard"})
+    actions = Action.objects.exclude(user=request.user)
+    following_ids = request.user.following.value_list('id', flat=True)
+    
+    if following_ids:
+        actions = actions.filter(user_id__in=following_ids)
+    actions = actions.select_related('user', 'user__profile').prefetch_related('target')[:10]
+    return render(request, "account/dashboard.html", {"section": "dashboard",
+                                                      'actions': actions})
 
 def register(request: HttpRequest) -> render:
     if request.method == "POST":#verificamos que sea un method POST
